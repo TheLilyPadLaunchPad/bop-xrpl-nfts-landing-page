@@ -2,83 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
-/* BOP XRP NFT Design System - Crypto meets Peace */
+/* BOP Design System - Gold & Peace Aesthetic */
 
 @layer base {
   :root {
-    /* Core XRP-inspired palette with peace undertones */
-    --background: 220 25% 6%;
-    --foreground: 210 40% 98%;
+    /* Warm cream and ivory base inspired by logo */
+    --background: 35 30% 6%;
+    --foreground: 40 30% 95%;
 
-    --card: 220 25% 10%;
-    --card-foreground: 210 40% 98%;
+    --card: 35 25% 10%;
+    --card-foreground: 40 30% 95%;
 
-    --popover: 220 25% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 35 25% 8%;
+    --popover-foreground: 40 30% 95%;
 
-    /* XRP Blue as primary */
-    --primary: 200 100% 50%;
-    --primary-foreground: 220 25% 6%;
+    /* Rich gold as primary - from logo */
+    --primary: 38 65% 50%;
+    --primary-foreground: 35 30% 6%;
 
-    /* Soft teal for secondary - peace vibes */
-    --secondary: 175 60% 40%;
-    --secondary-foreground: 210 40% 98%;
+    /* Warm bronze for secondary */
+    --secondary: 30 45% 35%;
+    --secondary-foreground: 40 30% 95%;
 
-    /* Muted deep blue */
-    --muted: 220 30% 15%;
-    --muted-foreground: 215 20% 65%;
+    /* Muted warm brown */
+    --muted: 30 20% 15%;
+    --muted-foreground: 35 20% 60%;
 
-    /* Warm gold accent - prosperity */
-    --accent: 45 100% 55%;
-    --accent-foreground: 220 25% 6%;
+    /* Bright gold accent - laurel leaves */
+    --accent: 43 75% 55%;
+    --accent-foreground: 35 30% 6%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 40 30% 95%;
 
-    --border: 220 30% 20%;
-    --input: 220 30% 20%;
-    --ring: 200 100% 50%;
+    --border: 35 25% 18%;
+    --input: 35 25% 18%;
+    --ring: 38 65% 50%;
 
     --radius: 0.75rem;
 
     /* Custom tokens for the landing page */
-    --glow-primary: 200 100% 50%;
-    --glow-accent: 45 100% 55%;
-    --gradient-start: 200 100% 50%;
-    --gradient-mid: 175 60% 40%;
-    --gradient-end: 220 60% 25%;
+    --glow-primary: 38 65% 50%;
+    --glow-accent: 43 75% 55%;
+    --gradient-start: 43 75% 55%;
+    --gradient-mid: 38 65% 50%;
+    --gradient-end: 30 45% 25%;
 
     /* Sidebar tokens */
-    --sidebar-background: 220 25% 8%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 200 100% 50%;
-    --sidebar-primary-foreground: 220 25% 6%;
-    --sidebar-accent: 175 60% 40%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 30% 20%;
-    --sidebar-ring: 200 100% 50%;
+    --sidebar-background: 35 25% 8%;
+    --sidebar-foreground: 40 30% 95%;
+    --sidebar-primary: 38 65% 50%;
+    --sidebar-primary-foreground: 35 30% 6%;
+    --sidebar-accent: 30 45% 35%;
+    --sidebar-accent-foreground: 40 30% 95%;
+    --sidebar-border: 35 25% 18%;
+    --sidebar-ring: 38 65% 50%;
   }
 
   .dark {
-    --background: 220 25% 6%;
-    --foreground: 210 40% 98%;
-    --card: 220 25% 10%;
-    --card-foreground: 210 40% 98%;
-    --popover: 220 25% 8%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 200 100% 50%;
-    --primary-foreground: 220 25% 6%;
-    --secondary: 175 60% 40%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 220 30% 15%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 45 100% 55%;
-    --accent-foreground: 220 25% 6%;
+    --background: 35 30% 6%;
+    --foreground: 40 30% 95%;
+    --card: 35 25% 10%;
+    --card-foreground: 40 30% 95%;
+    --popover: 35 25% 8%;
+    --popover-foreground: 40 30% 95%;
+    --primary: 38 65% 50%;
+    --primary-foreground: 35 30% 6%;
+    --secondary: 30 45% 35%;
+    --secondary-foreground: 40 30% 95%;
+    --muted: 30 20% 15%;
+    --muted-foreground: 35 20% 60%;
+    --accent: 43 75% 55%;
+    --accent-foreground: 35 30% 6%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 30% 20%;
-    --input: 220 30% 20%;
-    --ring: 200 100% 50%;
+    --destructive-foreground: 40 30% 95%;
+    --border: 35 25% 18%;
+    --input: 35 25% 18%;
+    --ring: 38 65% 50%;
   }
 }
 
