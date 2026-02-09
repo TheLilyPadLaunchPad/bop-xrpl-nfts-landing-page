@@ -8,6 +8,7 @@ import {
   HeroButton,
 } from '@/components/ui/animated-video-on-scroll';
 import nftVideo from '@/assets/bop-nft-video.mp4';
+import bopLogo from '@/assets/board-of-peace-logo.png';
 
 export function Hero() {
   return (
@@ -41,11 +42,12 @@ export function Hero() {
             </span>
           </div>
 
-          {/* Title */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
-            <span className="block text-foreground">Board of</span>
-            <span className="gradient-text text-glow">Peace</span>
-          </h1>
+          {/* Logo */}
+          <img 
+            src={bopLogo} 
+            alt="Board of Peace" 
+            className="h-24 md:h-32 lg:h-40 w-auto mb-4"
+          />
 
           {/* Subtitle */}
           <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-xl">
