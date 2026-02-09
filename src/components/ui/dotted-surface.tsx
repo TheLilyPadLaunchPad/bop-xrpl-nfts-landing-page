@@ -33,7 +33,7 @@ export function DottedSurface({ className, children, ...props }: DottedSurfacePr
 
     // Scene setup
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x0a0f1a, 2000, 10000);
+    scene.fog = new THREE.Fog(0x12100d, 2000, 10000);
 
     const camera = new THREE.PerspectiveCamera(
       60,
@@ -67,8 +67,8 @@ export function DottedSurface({ className, children, ...props }: DottedSurfacePr
         const z = iy * SEPARATION - (AMOUNTY * SEPARATION) / 2;
 
         positions.push(x, y, z);
-        // XRP blue-ish color (0, 170, 255 normalized)
-        colors.push(0, 0.67, 1);
+        // Warm gold color matching logo (HSL 38 65% 50% → RGB ~0.83, 0.60, 0.18)
+        colors.push(0.83, 0.60, 0.18);
       }
     }
 
