@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      community_registrations: {
+        Row: {
+          created_at: string
+          description: string
+          discord_url: string | null
+          id: string
+          nft_image_url: string | null
+          nft_token_id: string
+          project_image_url: string | null
+          project_name: string
+          twitter_url: string | null
+          updated_at: string
+          wallet_address: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          discord_url?: string | null
+          id?: string
+          nft_image_url?: string | null
+          nft_token_id: string
+          project_image_url?: string | null
+          project_name: string
+          twitter_url?: string | null
+          updated_at?: string
+          wallet_address: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          discord_url?: string | null
+          id?: string
+          nft_image_url?: string | null
+          nft_token_id?: string
+          project_image_url?: string | null
+          project_name?: string
+          twitter_url?: string | null
+          updated_at?: string
+          wallet_address?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
