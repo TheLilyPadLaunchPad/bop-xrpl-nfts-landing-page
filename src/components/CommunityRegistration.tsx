@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { useXrplWallet } from '@/hooks/useXrplWallet';
+import { useXamanAuth } from '@/hooks/useXamanAuth';
+import { WalletConnectionModal } from '@/components/WalletConnectionModal';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -20,7 +22,7 @@ interface FormData {
 
 export function CommunityRegistration() {
   const [isOpen, setIsOpen] = useState(false);
-  const [walletInput, setWalletInput] = useState('');
+  const [showWalletModal, setShowWalletModal] = useState(false);
   const [projectImage, setProjectImage] = useState<File | null>(null);
   const [projectImagePreview, setProjectImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,21 +36,40 @@ export function CommunityRegistration() {
   });
 
   const { toast } = useToast();
+
+  // Xaman authentication
+  const xamanAuth = useXamanAuth();
+
+  // XRPL wallet for NFT verification
   const {
-    isConnecting,
-    isConnected,
-    walletAddress,
+    isConnecting: isVerifying,
     nfts,
     selectedNft,
     error: walletError,
     verifyWallet,
     selectNft,
-    disconnect,
+    disconnect: disconnectWallet,
   } = useXrplWallet();
 
-  const handleWalletVerify = () => {
-    if (walletInput.trim()) {
-      verifyWallet(walletInput.trim());
+  // Auto-verify wallet when Xaman connects
+  const isWalletConnected = xamanAuth.isConnected;
+  const walletAddress = xamanAuth.walletAddress;
+
+  // Trigger NFT verification when wallet connects
+  const handleXamanConnect = () => {
+    xamanAuth.connect();
+    setShowWalletModal(true);
+  };
+
+  const handleModalClose = () => {
+    setShowWalletModal(false);
+    xamanAuth.cancelConnection();
+  };
+
+  // Verify NFTs when wallet connects
+  const handleVerifyNFTs = () => {
+    if (walletAddress) {
+      verifyWallet(walletAddress);
     }
   };
 
@@ -70,7 +91,7 @@ export function CommunityRegistration() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!walletAddress || !selectedNft) {
       toast({
         title: 'Wallet not verified',
@@ -98,7 +119,7 @@ export function CommunityRegistration() {
       if (projectImage) {
         const fileExt = projectImage.name.split('.').pop();
         const fileName = `${walletAddress}-${Date.now()}.${fileExt}`;
-        
+
         const { error: uploadError } = await supabase.storage
           .from('community-images')
           .upload(fileName, projectImage);
@@ -162,11 +183,11 @@ export function CommunityRegistration() {
       discordUrl: '',
       websiteUrl: '',
     });
-    setWalletInput('');
     setProjectImage(null);
     setProjectImagePreview(null);
     setIsSubmitted(false);
-    disconnect();
+    disconnectWallet();
+    xamanAuth.disconnect();
   };
 
   return (
@@ -180,14 +201,14 @@ export function CommunityRegistration() {
           Register Your Community
         </Button>
       </DialogTrigger>
-      
+
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-xl gradient-text">
             {isSubmitted ? 'Registration Complete!' : 'Register Your XRPL Community'}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            {isSubmitted 
+            {isSubmitted
               ? 'Your community is now live on the showcase.'
               : 'Verify your Board of Peace NFT ownership to register your project.'
             }
@@ -195,7 +216,7 @@ export function CommunityRegistration() {
         </DialogHeader>
 
         {isSubmitted ? (
-          <motion.div 
+          <motion.div
             className="flex flex-col items-center py-8 gap-4"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -210,61 +231,66 @@ export function CommunityRegistration() {
           </motion.div>
         ) : (
           <div className="space-y-6">
-            {/* Step 1: Verify Wallet */}
+            {/* Step 1: Connect Wallet */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isConnected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isWalletConnected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
                   1
                 </div>
-                <Label className="font-semibold">Verify Your XRP Wallet</Label>
+                <Label className="font-semibold">Connect Your XRP Wallet</Label>
               </div>
-              
-              {!isConnected ? (
+
+              {!isWalletConnected ? (
                 <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Enter your XRP wallet address (r...)"
-                      value={walletInput}
-                      onChange={(e) => setWalletInput(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button 
-                      onClick={handleWalletVerify} 
-                      disabled={isConnecting || !walletInput.trim()}
-                      variant="outline"
-                    >
-                      {isConnecting ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        'Verify'
-                      )}
-                    </Button>
-                  </div>
+                  <Button
+                    onClick={handleXamanConnect}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Wallet className="w-4 h-4 mr-2" />
+                    Connect with Xaman
+                  </Button>
                   <p className="text-xs text-muted-foreground">
-                    We'll check if your wallet holds a Board of Peace NFT
+                    Connect your Xaman wallet to verify NFT ownership
                   </p>
                 </div>
               ) : (
-                <div className="p-3 rounded-lg bg-muted/50 border border-border">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Verified Wallet</p>
-                      <p className="font-mono text-sm truncate max-w-[200px]">{walletAddress}</p>
+                <div className="space-y-2">
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Connected Wallet</p>
+                        <p className="font-mono text-sm truncate max-w-[200px]">{walletAddress}</p>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => { disconnectWallet(); xamanAuth.disconnect(); }}>
+                        <X className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={disconnect}>
-                      <X className="w-4 h-4" />
-                    </Button>
                   </div>
+                  {nfts.length === 0 && (
+                    <Button
+                      onClick={handleVerifyNFTs}
+                      disabled={isVerifying}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      {isVerifying ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        'Verify NFT Ownership'
+                      )}
+                    </Button>
+                  )}
                 </div>
               )}
-              
+
               {walletError && (
                 <p className="text-sm text-destructive">{walletError}</p>
               )}
             </div>
 
             {/* Step 2: Select NFT */}
-            {isConnected && nfts.length > 0 && (
+            {isWalletConnected && nfts.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${selectedNft ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
@@ -272,22 +298,21 @@ export function CommunityRegistration() {
                   </div>
                   <Label className="font-semibold">Select Your NFT</Label>
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-2 max-h-[180px] overflow-y-auto">
                   {nfts.map((nft) => (
                     <button
                       key={nft.tokenId}
                       onClick={() => selectNft(nft)}
-                      className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                        selectedNft?.tokenId === nft.tokenId 
-                          ? 'border-primary ring-2 ring-primary/50' 
-                          : 'border-border hover:border-primary/50'
-                      }`}
+                      className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedNft?.tokenId === nft.tokenId
+                        ? 'border-primary ring-2 ring-primary/50'
+                        : 'border-border hover:border-primary/50'
+                        }`}
                     >
                       {nft.imageUrl ? (
-                        <img 
-                          src={nft.imageUrl} 
-                          alt={nft.name || 'NFT'} 
+                        <img
+                          src={nft.imageUrl}
+                          alt={nft.name || 'NFT'}
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -308,7 +333,7 @@ export function CommunityRegistration() {
 
             {/* Step 3: Project Details Form */}
             {selectedNft && (
-              <motion.form 
+              <motion.form
                 onSubmit={handleSubmit}
                 className="space-y-4"
                 initial={{ opacity: 0, y: 10 }}
@@ -327,9 +352,9 @@ export function CommunityRegistration() {
                   <div className="flex items-center gap-4">
                     {projectImagePreview ? (
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden">
-                        <img 
-                          src={projectImagePreview} 
-                          alt="Preview" 
+                        <img
+                          src={projectImagePreview}
+                          alt="Preview"
                           className="w-full h-full object-cover"
                         />
                         <button
@@ -404,7 +429,7 @@ export function CommunityRegistration() {
                       placeholder="https://twitter.com/yourproject"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="discord" className="flex items-center gap-2">
                       <MessageCircle className="w-4 h-4" /> Discord
@@ -416,7 +441,7 @@ export function CommunityRegistration() {
                       placeholder="https://discord.gg/yourserver"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="website" className="flex items-center gap-2">
                       <Globe className="w-4 h-4" /> Website
@@ -430,8 +455,8 @@ export function CommunityRegistration() {
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full glow-primary"
                   disabled={isSubmitting}
                 >
@@ -449,6 +474,16 @@ export function CommunityRegistration() {
           </div>
         )}
       </DialogContent>
+
+      {/* Wallet Connection Modal */}
+      <WalletConnectionModal
+        isOpen={showWalletModal}
+        onClose={handleModalClose}
+        qrCode={xamanAuth.qrCode}
+        deepLink={xamanAuth.deepLink}
+        isConnecting={xamanAuth.isConnecting}
+        error={xamanAuth.error}
+      />
     </Dialog>
   );
 }

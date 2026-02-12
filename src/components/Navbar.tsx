@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Wallet, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useXamanAuth } from '@/hooks/useXamanAuth';
+import { WalletConnectionModal } from '@/components/WalletConnectionModal';
 
 const navLinks = [
   { label: 'Home', href: '#' },
@@ -12,6 +14,22 @@ const navLinks = [
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const { isConnected, walletAddress, qrCode, deepLink, isConnecting, error, connect, disconnect, cancelConnection } = useXamanAuth();
+
+  const handleConnectClick = () => {
+    connect();
+    setShowWalletModal(true);
+  };
+
+  const handleModalClose = () => {
+    setShowWalletModal(false);
+    cancelConnection();
+  };
+
+  const formatAddress = (address: string) => {
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
@@ -19,8 +37,8 @@ export function Navbar() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <motion.a 
-              href="#" 
+            <motion.a
+              href="#"
               className="text-2xl font-bold gradient-text"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -50,14 +68,35 @@ export function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="hidden md:block"
+              className="hidden md:flex items-center gap-2"
             >
-              <Button 
-                size="sm" 
-                className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary"
-              >
-                Connect Wallet
-              </Button>
+              {isConnected ? (
+                <>
+                  <div className="px-3 py-1 rounded-lg bg-primary/10 border border-primary/20 flex items-center gap-2">
+                    <Wallet className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-mono text-primary">
+                      {formatAddress(walletAddress!)}
+                    </span>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={disconnect}
+                    className="hover:bg-destructive/10"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  size="sm"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 glow-primary"
+                  onClick={handleConnectClick}
+                >
+                  <Wallet className="w-4 h-4 mr-2" />
+                  Connect Wallet
+                </Button>
+              )}
             </motion.div>
 
             {/* Mobile Menu Button */}
@@ -94,17 +133,49 @@ export function Navbar() {
                     {link.label}
                   </a>
                 ))}
-                <Button 
-                  size="sm" 
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2"
-                >
-                  Connect Wallet
-                </Button>
+                {isConnected ? (
+                  <div className="space-y-2 mt-2">
+                    <div className="px-3 py-2 rounded-lg bg-primary/10 border border-primary/20 flex items-center gap-2">
+                      <Wallet className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-mono text-primary">
+                        {formatAddress(walletAddress!)}
+                      </span>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={disconnect}
+                      className="w-full"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Disconnect
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    size="sm"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2"
+                    onClick={handleConnectClick}
+                  >
+                    <Wallet className="w-4 h-4 mr-2" />
+                    Connect Wallet
+                  </Button>
+                )}
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Wallet Connection Modal */}
+      <WalletConnectionModal
+        isOpen={showWalletModal}
+        onClose={handleModalClose}
+        qrCode={qrCode}
+        deepLink={deepLink}
+        isConnecting={isConnecting}
+        error={error}
+      />
     </nav>
   );
 }
