@@ -1,14 +1,10 @@
 import { motion } from 'framer-motion';
-import nft1 from '@/assets/nft-character-1.png';
-import nft2 from '@/assets/nft-character-2.png';
-import nft3 from '@/assets/nft-character-3.png';
-import nft4 from '@/assets/nft-character-4.png';
 
 const nfts = [
-  { id: 1, image: nft1, name: 'Peaceful Guardian', price: '150 XRP', rarity: 'Rare' },
-  { id: 2, image: nft2, name: 'Dove of Hope', price: '200 XRP', rarity: 'Epic' },
-  { id: 3, image: nft3, name: 'Zen Master', price: '180 XRP', rarity: 'Rare' },
-  { id: 4, image: nft4, name: 'Golden Spirit', price: '300 XRP', rarity: 'Legendary' },
+  { id: 1, image: 'https://i.ibb.co/G3FW2xWQ/HARQwQEacAAMAcU.jpg', name: 'Peaceful Guardian', price: '150 XRP', rarity: 'Rare' },
+  { id: 2, image: 'https://i.ibb.co/BVFVF5xz/HAlsCSvagAAYmgW.jpg', name: 'Dove of Hope', price: '200 XRP', rarity: 'Epic' },
+  { id: 3, image: 'https://i.ibb.co/tMvhLP4Z/HALW4QRa8AASqfO.jpg', name: 'Zen Master', price: '180 XRP', rarity: 'Rare' },
+  { id: 4, image: 'https://i.ibb.co/fzRDF69f/HA65674bIAAQgR6.jpg', name: 'Golden Spirit', price: '300 XRP', rarity: 'Legendary' },
 ];
 
 const rarityColors: Record<string, string> = {
@@ -22,10 +18,10 @@ export function NFTShowcase() {
     <section className="py-24 px-6 relative">
       {/* Section background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/20 to-transparent" />
-      
+
       <div className="container mx-auto relative z-10">
         {/* Section header */}
-        <motion.div 
+        <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -37,7 +33,7 @@ export function NFTShowcase() {
             <span className="gradient-text">Collection</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Each piece is hand-drawn with care, representing peace and unity 
+            Each piece is hand-drawn with care, representing peace and unity
             on the XRP Ledger.
           </p>
         </motion.div>
@@ -57,8 +53,8 @@ export function NFTShowcase() {
                 {/* NFT Image */}
                 <div className="aspect-square p-4 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <img 
-                    src={nft.image} 
+                  <img
+                    src={nft.image}
                     alt={nft.name}
                     className="w-full h-full object-contain relative z-10 group-hover:scale-110 transition-transform duration-500"
                   />
@@ -86,7 +82,7 @@ export function NFTShowcase() {
         </div>
 
         {/* View all button */}
-        <motion.div 
+        <motion.div
           className="text-center mt-12"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
