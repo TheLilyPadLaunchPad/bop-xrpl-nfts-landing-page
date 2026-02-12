@@ -133,7 +133,7 @@ export const HeroVideo = React.forwardRef<
   return (
     <motion.video
       ref={ref}
-      className={cn("size-full object-cover", className)}
+      className={cn("size-full object-contain", className)}
       transition={transition ?? SPRING_TRANSITION_CONFIG}
       style={{ ...style, scale }}
       {...props}
